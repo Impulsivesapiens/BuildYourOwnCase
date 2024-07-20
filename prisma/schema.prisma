@@ -53,7 +53,8 @@ model Configuration {
 }
 
 model User {
-  id    String  @id @default(cuid())
+  id    Int  @id @default(autoincrement())
+  kindeId   String   @unique
   email String
   Order Order[]
 
@@ -66,7 +67,7 @@ model Order {
   configurationId String
   configuration   Configuration @relation(fields: [configurationId], references: [id])
   userId          String
-  user            User          @relation(fields: [userId], references: [id])
+  user            User          @relation(fields: [userId], references: [kindeId])
   amount          Float
   isPaid          Boolean       @default(false)
   status          OrderStatus   @default(awaiting_shipment)
