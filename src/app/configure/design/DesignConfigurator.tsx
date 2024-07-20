@@ -7,13 +7,8 @@ import { cn, formatPrice } from '@/lib/utils'
 import NextImage from 'next/image'
 import { Rnd } from 'react-rnd'
 import { RadioGroup } from '@headlessui/react'
-import { useRef, useState } from 'react'
-import {
-  COLORS,
-  FINISHES,
-  MATERIALS,
-  MODELS,
-} from '@/validators/option-validator'
+import { useEffect, useRef, useState } from 'react'
+
 import { Label } from '@/components/ui/label'
 import {
   DropdownMenu,
@@ -29,7 +24,40 @@ import { useToast } from '@/components/ui/use-toast'
 import { useMutation } from '@tanstack/react-query'
 import { saveConfig as _saveConfig, SaveConfigArgs } from './actions'
 import { useRouter } from 'next/navigation'
+import { set } from 'zod';
+type Color = {
+  label: string;
+  value: string;
+  tw: 'zinc-900' | 'blue-950' | 'rose-950';
+};
 
+type Model = {
+  name: string;
+  options: {
+    label: string;
+    value: string;
+  }[];
+};
+
+type Material = {
+  name: string;
+  options: {
+    label: string;
+    value: string;
+    description?: string;
+    price: number;
+  }[];
+};
+
+type Finish = {
+  name: string;
+  options: {
+    label: string;
+    value: string;
+    description?: string;
+    price: number;
+  }[];
+};
 interface DesignConfiguratorProps {
   configId: string
   imageUrl: string
@@ -41,6 +69,11 @@ const DesignConfigurator = ({
   imageUrl,
   imageDimensions,
 }: DesignConfiguratorProps) => {
+  const [COLORS, setColors] = useState<Color[]>([])
+  const [MODELS, setModels] = useState<Model>({ name: 'models', options: [] })
+  const [MATERIALS, setMaterials] = useState<Material>({ name: 'material', options: [] })
+  const [FINISHES, setFinishes] = useState<Finish>({ name: 'finish', options: [] })
+  const [loading, setLoading] = useState(true)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -60,7 +93,6 @@ const DesignConfigurator = ({
       router.push(`/configure/preview?id=${configId}`)
     },
   })
-
   const [options, setOptions] = useState<{
     color: (typeof COLORS)[number]
     model: (typeof MODELS.options)[number]
@@ -72,6 +104,51 @@ const DesignConfigurator = ({
     material: MATERIALS.options[0],
     finish: FINISHES.options[0],
   })
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/configure');
+        const { colors, finishes, materials, devices } = await res.json();
+
+        if (!colors || !finishes || !materials || !devices) {
+          throw new Error('Data not found');
+        }
+
+        setColors(colors);
+        setMaterials((prev) => ({
+          ...prev,
+          options: materials,
+        }));
+        setFinishes((prev) => ({
+          ...prev,
+          options: finishes,
+        }));
+        setModels((prev) => ({
+          ...prev,
+          options: devices,
+        }));
+
+        console.log(colors);
+
+        // Ensure options are set after state updates
+        setOptions({
+          color: colors[0],
+          model: devices[0], // Assuming devices should be used here
+          material: materials[0], // Assuming materials should be used here
+          finish: finishes[0], // Assuming finishes should be used here
+        });
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching configuration data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+
 
   const [renderedDimension, setRenderedDimension] = useState({
     width: imageDimensions.width / 4,
@@ -150,7 +227,7 @@ const DesignConfigurator = ({
     const byteArray = new Uint8Array(byteNumbers)
     return new Blob([byteArray], { type: mimeType })
   }
-
+  if (loading && !options.color && !options.finish && !options.model && !options.material) return <div>Loading...</div>
   return (
     <div className='relative mt-20 grid grid-cols-1 lg:grid-cols-3 mb-20 pb-20'>
       <div
@@ -377,7 +454,7 @@ const DesignConfigurator = ({
               <p className='font-medium whitespace-nowrap'>
                 {formatPrice(
                   (BASE_PRICE + options.finish.price + options.material.price) /
-                    100
+                  100
                 )}
               </p>
               <Button
