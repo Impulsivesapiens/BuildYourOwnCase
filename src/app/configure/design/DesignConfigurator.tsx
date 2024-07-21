@@ -26,7 +26,15 @@ import { useMutation } from '@tanstack/react-query'
 import { saveConfig as _saveConfig, SaveConfigArgs } from './actions'
 import { useRouter } from 'next/navigation'
 import { set } from 'zod';
-
+// bg-red-900 border-red-900
+// bg-green-900 border-green-900
+// bg-cyan-500 border-cyan-500
+// bg-violet-700 border-violet-700
+// bg-fuchsia-400 border-fuchsia-400
+// bg-zinc-900 border-zinc-900
+// bg-rose-900 border-rose-900
+// bg-blue-800 border-blue-800
+// bg-gray-800 border-gray-800
 
 type Color = {
   id: string;
