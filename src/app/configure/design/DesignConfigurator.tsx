@@ -97,12 +97,10 @@ const DesignConfigurator = ({
       router.push(`/configure/preview?id=${configId}`)
     },
   })
-  const [options, setOptions] = useState<{
-    color: (typeof COLORS)[number]
-    model: (typeof MODELS.options)[number]
-    material: (typeof MATERIALS.options)[number]
-    finish: (typeof FINISHES.options)[number]
-  }>({
+  type OptionsType = {
+    [key: string]: any;
+  };
+  const [options, setOptions] = useState<OptionsType>({
     color: COLORS[0],
     model: MODELS.options[0],
     material: MATERIALS.options[0],

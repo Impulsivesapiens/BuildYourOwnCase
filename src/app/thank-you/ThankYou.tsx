@@ -42,8 +42,8 @@ const ThankYou = () => {
     )
   }
 
-  const { configuration, billingAddress, shippingAddress, amount } = data
-  const { color } = configuration
+  const { configuration, billingAddress, shippingAddress, amount } = data.order
+  const color = data.color
 
   return (
     <div className='bg-white'>
