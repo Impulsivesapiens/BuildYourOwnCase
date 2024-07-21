@@ -6,11 +6,38 @@ import { Button } from "@/components/ui/button";
 
 
 export default function Manage() {
+
+    interface Color {
+        id: string,
+        label: string,
+        value: string,
+        tw: string,
+
+    }
+    interface Material {
+        id: string,
+        label: string,
+        value: string,
+        description?: string,
+        price: number,
+    }
+    interface Finish {
+        id: string,
+        label: string,
+        value: string,
+        description?: string,
+        price: number,
+    }
+    interface Device {
+        id: string,
+        label: string,
+        value: string,
+    }
     const [loading, setLoading] = useState(true);
-    const [colors, setColors] = useState([]);
-    const [materials, setMaterials] = useState([]);
-    const [finishes, setFinishes] = useState([]);
-    const [devices, setDevices] = useState([]);
+    const [colors, setColors] = useState<Color[]>([]);
+    const [materials, setMaterials] = useState<Material[]>([]);
+    const [finishes, setFinishes] = useState<Finish[]>([]);
+    const [devices, setDevices] = useState<Device[]>([]);
     const [visible, setVisible] = useState("");
 
     const deviceNameRef = createRef<HTMLInputElement>();
@@ -152,7 +179,7 @@ export default function Manage() {
                         </TableHeader>
                         <TableBody>
                             {devices.map((order) => (
-                                <TableRow key={order.id} className="bg-accent">
+                                <TableRow key={order.id.toString()} className="bg-accent">
                                     <TableCell>
                                         <div className="font-medium">{order.label}</div>
                                     </TableCell>
@@ -205,7 +232,7 @@ export default function Manage() {
                         </TableHeader>
                         <TableBody>
                             {colors.map((order) => (
-                                <TableRow key={order.id} className="bg-accent">
+                                <TableRow key={order.id.toString()} className="bg-accent">
                                     <TableCell>
                                         <div className="font-medium">{order.label}</div>
                                     </TableCell>
@@ -339,7 +366,7 @@ export default function Manage() {
                         </TableHeader>
                         <TableBody>
                             {finishes.map((order) => (
-                                <TableRow key={order.id} className="bg-accent">
+                                <TableRow key={order.id.toString()} className="bg-accent">
                                     <TableCell>
                                         <div className="font-medium">{order.label}</div>
                                     </TableCell>

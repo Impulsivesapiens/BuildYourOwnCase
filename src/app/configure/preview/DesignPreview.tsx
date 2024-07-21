@@ -4,8 +4,7 @@ import Phone from '@/components/Phone'
 import { Button } from '@/components/ui/button'
 import { BASE_PRICE, PRODUCT_PRICES } from '@/config/products'
 import { cn, formatPrice } from '@/lib/utils'
-import { COLORS, FINISHES, MODELS } from '@/validators/option-validator'
-import { Configuration } from '@prisma/client'
+
 import { useMutation } from '@tanstack/react-query'
 import { ArrowRight, Check } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -16,7 +15,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import LoginModal from '@/components/LoginModal'
 
-const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
+const DesignPreview = ({ configuration }: any) => {
   const router = useRouter()
   const { toast } = useToast()
   const { id } = configuration
@@ -28,16 +27,14 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
 
   const { color, model, finish, material } = configuration
 
-  const tw = COLORS.find((supportedColor) => supportedColor.value === color)?.tw
+  const tw = color.tw
 
-  const { label: modelLabel } = MODELS.options.find(
-    ({ value }) => value === model
-  )!
+  const modelLabel = model.label
 
   let totalPrice = BASE_PRICE
-  if (material === 'polycarbonate')
-    totalPrice += PRODUCT_PRICES.material.polycarbonate
-  if (finish === 'textured') totalPrice += PRODUCT_PRICES.finish.textured
+  if (material)
+    totalPrice += material.price ? parseInt(material.price) : 0
+  if (finish) totalPrice += finish.price ? parseInt(finish.price) : 0
 
   const { mutate: createPaymentSession } = useMutation({
     mutationKey: ['get-checkout-session'],
@@ -123,24 +120,24 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
                 <div className='flex items-center justify-between py-1 mt-2'>
                   <p className='text-gray-600'>Base price</p>
                   <p className='font-medium text-gray-900'>
-                    {formatPrice(BASE_PRICE / 100)}
+                    {formatPrice(BASE_PRICE )}
                   </p>
                 </div>
 
-                {finish === 'textured' ? (
+                {finish ? (
                   <div className='flex items-center justify-between py-1 mt-2'>
                     <p className='text-gray-600'>Textured finish</p>
                     <p className='font-medium text-gray-900'>
-                      {formatPrice(PRODUCT_PRICES.finish.textured / 100)}
+                      {formatPrice(finish.price )}
                     </p>
                   </div>
                 ) : null}
 
-                {material === 'polycarbonate' ? (
+                {material ? (
                   <div className='flex items-center justify-between py-1 mt-2'>
                     <p className='text-gray-600'>Soft polycarbonate material</p>
                     <p className='font-medium text-gray-900'>
-                      {formatPrice(PRODUCT_PRICES.material.polycarbonate / 100)}
+                      {formatPrice(material.price )}
                     </p>
                   </div>
                 ) : null}
@@ -150,7 +147,7 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
                 <div className='flex items-center justify-between py-2'>
                   <p className='font-semibold text-gray-900'>Order total</p>
                   <p className='font-semibold text-gray-900'>
-                    {formatPrice(totalPrice / 100)}
+                    {formatPrice(totalPrice )}
                   </p>
                 </div>
               </div>

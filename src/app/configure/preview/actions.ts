@@ -26,12 +26,29 @@ export const createCheckoutSession = async ({
     throw new Error('You need to be logged in')
   }
 
-  const { finish, material } = configuration
+  const { caseFinishId, caseMaterialId } = configuration
 
   let price = BASE_PRICE
-  if (finish === 'textured') price += PRODUCT_PRICES.finish.textured
-  if (material === 'polycarbonate')
-    price += PRODUCT_PRICES.material.polycarbonate
+
+
+  if (caseFinishId) {
+
+    const finish = await db.caseFinish.findUnique({
+      where: { id: caseFinishId },
+    })
+    if (finish?.price) {
+      price += finish?.price
+    }
+  }
+  if (caseMaterialId) {
+    const material = await db.caseMaterial.findUnique({
+      where: { id: caseMaterialId }
+    })
+
+    if (material?.price) {
+      price += material.price
+    }
+  }
 
   let order: Order | undefined = undefined
 
@@ -68,7 +85,7 @@ export const createCheckoutSession = async ({
   const stripeSession = await stripe.checkout.sessions.create({
     success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/thank-you?orderId=${order.id}`,
     cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/configure/preview?id=${configuration.id}`,
-    payment_method_types: ['card','amazon_pay'],
+    payment_method_types: ['card', 'amazon_pay'],
     mode: 'payment',
     shipping_address_collection: { allowed_countries: ['IN', 'US', 'BD'] },
     metadata: {

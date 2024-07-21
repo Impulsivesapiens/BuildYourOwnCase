@@ -1,38 +1,39 @@
 generator client {
   provider = "prisma-client-js"
-  
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 enum OrderStatus {
   fulfilled
   shipped
   awaiting_shipment
 }
-
-
 model Configuration {
   id              String        @id @default(cuid())
   width           Int
   height          Int
   imageUrl        String
-  color           String?
-  model           String?
-  material        String?
-  finish          String?
+  color           CaseColor?    @relation(fields: [caseColorId], references: [id])
+  model           PhoneModel?   @relation(fields: [phoneModelId], references: [id])
+  material        CaseMaterial? @relation(fields: [caseMaterialId], references: [id])
+  finish          CaseFinish?   @relation(fields: [caseFinishId], references: [id])
   croppedImageUrl String?
-  Order           Order[]
+
+  Order          Order[]
+  caseColorId    String?
+  phoneModelId   String?
+  caseMaterialId String?
+  caseFinishId   String?
 }
 
 model User {
-  id    Int  @id @default(autoincrement())
-  kindeId   String   @unique
-  email String
-  Order Order[]
+  id      Int     @id @default(autoincrement())
+  kindeId String  @unique
+  email   String
+  Order   Order[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -81,31 +82,35 @@ model BillingAddress {
   orders      Order[]
 }
 
-model Material {
-  id            String  @id @default(cuid())
+model CaseMaterial {
+  id            String          @id @default(cuid())
   label         String
   value         String
   description   String?
   price         Int
+  Configuration Configuration[]
 }
 
-model Device {
-  id      String  @id @default(cuid())
-  label   String
-  value   String
-}
-
-model Finish {
-  id            String  @id @default(cuid())
+model CaseFinish {
+  id            String          @id @default(cuid())
   label         String
   value         String
   description   String?
   price         Int
+  Configuration Configuration[]
 }
 
-model Color {
-  id    String  @id @default(cuid())
-  label String
-  value String
-  tw    String
+model CaseColor {
+  id            String          @id @default(cuid())
+  label         String
+  value         String
+  tw            String
+  Configuration Configuration[]
+}
+
+model PhoneModel {
+  id            String          @id @default(cuid())
+  label         String
+  value         String
+  Configuration Configuration[]
 }

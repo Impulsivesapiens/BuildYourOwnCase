@@ -1,14 +1,14 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, CaseColor } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
 export async function GET() {
     try {
-        const colors = await prisma.color.findMany();
-        const finishes = await prisma.finish.findMany();
-        const materials = await prisma.material.findMany();
-        const devices = await prisma.device.findMany();
+        const colors = await prisma.caseColor.findMany();
+        const finishes = await prisma.caseFinish.findMany();
+        const materials = await prisma.caseMaterial.findMany();
+        const devices = await prisma.phoneModel.findMany();
         if (!colors || !finishes || !materials || !devices) {
             throw new Error('Data not found');
 
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         if (colors && visible === 'colors') {
             console.log(colors);
             for (const color of colors) {
-                await prisma.color.create({
+                await prisma.caseColor.create({
                     data: {
                         label: color.label,
                         value: color.value,
@@ -46,20 +46,20 @@ export async function POST(request: NextRequest) {
         if (finishes) {
             console.log(finishes);
             for (const finish of finishes) {
-                await prisma.finish.create(
+                await prisma.caseFinish.create(
                     { data: { label: finish.label, value: finish.value, description: finish.description, price: parseInt(finish.price) * 100 } })
             }
         }
 
         if (materials) {
             for (const material of materials) {
-                await prisma.material.create({ data: { label: material.label, value: material.value, description: material.description, price: parseInt(material.price) * 100 } })
+                await prisma.caseMaterial.create({ data: { label: material.label, value: material.value, description: material.description, price: parseInt(material.price) * 100 } })
             }
         }
 
         if (devices) {
             for (const device of devices) {
-                await prisma.device.create({ data: device })
+                await prisma.phoneModel.create({ data: device })
             }
 
 

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
         }
 
         if (visible === 'colors') {
-            await prisma.color.deleteMany({
+            await prisma.caseColor.deleteMany({
                 where: {
                     id: {
                         in: ids,
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
                 },
             });
         } else if (visible === 'finishes') {
-            await prisma.finish.deleteMany({
+            await prisma.caseFinish.deleteMany({
                 where: {
                     id: {
                         in: ids,
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
                 },
             });
         } else if (visible === 'materials') {
-            await prisma.material.deleteMany({
+            await prisma.caseMaterial.deleteMany({
                 where: {
                     id: {
                         in: ids,
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
                 },
             });
         } else if (visible === 'devices') {
-            await prisma.device.deleteMany({
+            await prisma.phoneModel.deleteMany({
                 where: {
                     id: {
                         in: ids,
