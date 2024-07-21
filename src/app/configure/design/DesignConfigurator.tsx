@@ -26,6 +26,7 @@ import { saveConfig as _saveConfig, SaveConfigArgs } from './actions'
 import { useRouter } from 'next/navigation'
 import { set } from 'zod';
 type Color = {
+  id: string;
   label: string;
   value: string;
   tw: 'zinc-900' | 'blue-950' | 'rose-950';
@@ -34,6 +35,7 @@ type Color = {
 type Model = {
   name: string;
   options: {
+    id: string;
     label: string;
     value: string;
   }[];
@@ -42,6 +44,7 @@ type Model = {
 type Material = {
   name: string;
   options: {
+    id: string;
     label: string;
     value: string;
     description?: string;
@@ -52,6 +55,7 @@ type Material = {
 type Finish = {
   name: string;
   options: {
+    id: string;
     label: string;
     value: string;
     description?: string;
@@ -93,12 +97,10 @@ const DesignConfigurator = ({
       router.push(`/configure/preview?id=${configId}`)
     },
   })
-  const [options, setOptions] = useState<{
-    color: (typeof COLORS)[number]
-    model: (typeof MODELS.options)[number]
-    material: (typeof MATERIALS.options)[number]
-    finish: (typeof FINISHES.options)[number]
-  }>({
+  type OptionsType = {
+    [key: string]: any;
+  };
+  const [options, setOptions] = useState<OptionsType>({
     color: COLORS[0],
     model: MODELS.options[0],
     material: MATERIALS.options[0],
@@ -433,7 +435,7 @@ const DesignConfigurator = ({
                               as='span'
                               className='mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right'>
                               <span className='font-medium text-gray-900'>
-                                {formatPrice(option.price / 100)}
+                                {formatPrice(option.price)}
                               </span>
                             </RadioGroup.Description>
                           </RadioGroup.Option>
@@ -453,8 +455,7 @@ const DesignConfigurator = ({
             <div className='w-full flex gap-6 items-center'>
               <p className='font-medium whitespace-nowrap'>
                 {formatPrice(
-                  (BASE_PRICE + options.finish.price + options.material.price) /
-                  100
+                  (BASE_PRICE + options.finish.price + options.material.price)
                 )}
               </p>
               <Button
@@ -464,10 +465,10 @@ const DesignConfigurator = ({
                 onClick={() =>
                   saveConfig({
                     configId,
-                    color: options.color.value,
-                    finish: options.finish.value,
-                    material: options.material.value,
-                    model: options.model.value,
+                    colorId: options.color.id,
+                    finishId: options.finish.id,
+                    materialId: options.material.id,
+                    modelId: options.model.id,
                   })
                 }
                 size='sm'

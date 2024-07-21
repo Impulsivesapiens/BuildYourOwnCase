@@ -3,6 +3,7 @@
 import { db } from '@/db'
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 
+
 export const getPaymentStatus = async ({ orderId }: { orderId: string }) => {
   const { getUser } = getKindeServerSession()
   const user = await getUser()
@@ -20,11 +21,16 @@ export const getPaymentStatus = async ({ orderId }: { orderId: string }) => {
       user: true,
     },
   })
-
   if (!order) throw new Error('This order does not exist.')
 
   if (order.isPaid) {
-    return order
+    if (order && order.configuration && order.configuration.caseColorId) {
+      const color = await db.caseColor.findUnique({
+        where: { id: order.configuration.caseColorId },
+
+      })
+      return { order: order, color: color }
+    }
   } else {
     return false
   }

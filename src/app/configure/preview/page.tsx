@@ -19,11 +19,28 @@ const Page = async ({ searchParams }: PageProps) => {
     where: { id },
   })
 
-  if(!configuration) {
+  if (!configuration) {
     return notFound()
   }
 
-  return <DesignPreview configuration={configuration} />
+  if (!configuration.caseColorId || !configuration.caseFinishId || !configuration.caseMaterialId || !configuration.phoneModelId) {
+    return notFound()
+  } else {
+    const color = await db.caseColor.findUnique({
+      where: { id: configuration.caseColorId },
+    })
+    const finish = await db.caseFinish.findUnique({
+      where: { id: configuration.caseFinishId },
+    })
+    const material = await db.caseMaterial.findUnique({
+      where: { id: configuration.caseMaterialId },
+    })
+    const model = await db.phoneModel.findUnique({
+      where: { id: configuration.phoneModelId },
+    })
+    return <DesignPreview configuration={{ id: configuration.id, color: color || null, finish, material, model, croppedImageUrl: configuration.croppedImageUrl }} />
+  }
+
 }
 
 export default Page
