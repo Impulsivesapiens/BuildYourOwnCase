@@ -35,7 +35,17 @@ const Navbar = async () => {
                       size: 'sm',
                       variant: 'ghost',
                     })}>
-                    Dashboard ✨
+                    Dashboard
+                  </Link>
+                ) : null}
+                {isAdmin ? (
+                  <Link
+                    href='/dashboard/manage'
+                    className={buttonVariants({
+                      size: 'sm',
+                      variant: 'ghost',
+                    })}>
+                    Manage
                   </Link>
                 ) : null}
                 <Link

@@ -3,6 +3,7 @@ import React, { useState, useEffect, createRef } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from 'lucide-react';
 
 
 export default function Manage() {
@@ -151,7 +152,7 @@ export default function Manage() {
             });
     }
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className='min-h-[90vh] flex item-center content-center justify-center mt-[40vh]'><Loader2 className='h-14 w-14 animate-spin text-zinc-500' /></div>;
     }
 
 

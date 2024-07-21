@@ -8,6 +8,7 @@ import NextImage from 'next/image'
 import { Rnd } from 'react-rnd'
 import { RadioGroup } from '@headlessui/react'
 import { useEffect, useRef, useState } from 'react'
+import { Loader2 } from 'lucide-react';
 
 import { Label } from '@/components/ui/label'
 import {
@@ -25,6 +26,8 @@ import { useMutation } from '@tanstack/react-query'
 import { saveConfig as _saveConfig, SaveConfigArgs } from './actions'
 import { useRouter } from 'next/navigation'
 import { set } from 'zod';
+
+
 type Color = {
   id: string;
   label: string;
@@ -229,7 +232,7 @@ const DesignConfigurator = ({
     const byteArray = new Uint8Array(byteNumbers)
     return new Blob([byteArray], { type: mimeType })
   }
-  if (loading && !options.color && !options.finish && !options.model && !options.material) return <div>Loading...</div>
+  if (loading && !options.color && !options.finish && !options.model && !options.material) return <div className='min-h-[90vh] flex item-center content-center justify-center mt-[40vh]'><Loader2 className='h-14 w-14 animate-spin text-zinc-500' /></div>;
   return (
     <div className='relative mt-20 grid grid-cols-1 lg:grid-cols-3 mb-20 pb-20'>
       <div
@@ -328,13 +331,13 @@ const DesignConfigurator = ({
                           cn(
                             'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 active:ring-0 focus:ring-0 active:outline-none focus:outline-none border-2 border-transparent',
                             {
-                              [`border-${color.tw}`]: active || checked,
+                              [`border-${color.tw.toString()}`]: active || checked,
                             }
                           )
                         }>
                         <span
                           className={cn(
-                            `bg-${color.tw}`,
+                            `bg-${color.tw.toString()}`,
                             'h-8 w-8 rounded-full border border-black border-opacity-10'
                           )}
                         />
