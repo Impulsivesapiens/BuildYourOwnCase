@@ -3,10 +3,32 @@ import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import Phone from '@/components/Phone'
 import { Reviews } from '@/components/Reviews'
 import { buttonVariants } from '@/components/ui/button'
+import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server'
 import { ArrowRight, Check, Star } from 'lucide-react'
 import Link from 'next/link'
+import { db } from '@/db'
 
-export default function Home() {
+export default async function Home() {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+
+  if (user && user.id) {
+    let dbUser = await db.user.findUnique({
+      where: { kindeId: user.id },
+    });
+
+    if (!dbUser) {
+      dbUser = await db.user.create({
+        data: {
+          kindeId: user.id,
+          email: user.email ?? "", // Default empty string if email is null or undefined
+        },
+      });
+    }
+  }
+
+
+
   return (
     <div className='bg-slate-50 grainy-light'>
       <section>
@@ -17,8 +39,8 @@ export default function Home() {
                 {/* i forgot this div right here in the video, it's purely visual gradient and looks nice */}
                 <div className='absolute inset-x-0 bottom-0 bg-gradient-to-t via-slate-50/50 from-slate-50 h-28' />
                 <h1 className='relative w-fit text-balance mt-16 font-semibold !leading-tight text-4xl md:text-2xl lg:text-4xl'>
-  <span className='text-black'>Build</span><span className='text-green-600'>Your</span><span className='text-black'>Own</span><span className='text-green-600'>Case</span>
-</h1>
+                  <span className='text-black'>Build</span><span className='text-green-600'>Your</span><span className='text-black'>Own</span><span className='text-green-600'>Case</span>
+                </h1>
 
               </div>
               <h1 className='relative w-fit tracking-tight text-balance mt-16 font-bold !leading-tight text-gray-900 text-5xl md:text-6xl lg:text-7xl'>
